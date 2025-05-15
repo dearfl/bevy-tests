@@ -1,20 +1,25 @@
 use bevy::{prelude::*, window::WindowMode};
 
 fn main() {
-    let mut app = App::new();
-    app.add_plugins(DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-            mode: WindowMode::Fullscreen(MonitorSelection::Current, VideoModeSelection::Current),
+    App::new()
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                mode: WindowMode::Fullscreen(
+                    // this won't work, panics
+                    MonitorSelection::Primary,
+                    // this won't work either, panics
+                    // MonitorSelection::Current,
+                    // this works, though fullscreen is ignored on wayland
+                    // MonitorSelection::Index(0),
+                    VideoModeSelection::Current,
+                ),
+                ..Default::default()
+            }),
             ..Default::default()
-        }),
-        ..Default::default()
-    }));
-
-    #[cfg(feature = "inspect")]
-    app.add_plugins(bevy_inspector_egui::bevy_egui::EguiPlugin {
-        enable_multipass_for_primary_context: true,
-    })
-    .add_plugins(bevy_inspector_egui::quick::WorldInspectorPlugin::new());
-
-    app.run();
+        }))
+        .add_plugins(bevy_inspector_egui::bevy_egui::EguiPlugin {
+            enable_multipass_for_primary_context: true,
+        })
+        .add_plugins(bevy_inspector_egui::quick::WorldInspectorPlugin::new())
+        .run();
 }
